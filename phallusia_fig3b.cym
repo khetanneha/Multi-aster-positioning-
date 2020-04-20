@@ -1,0 +1,204 @@
+/** Neha Khetan, SOCM Lab, IISER Pune
+Multiple Asters , 2018 
+Importing multi-aster calculations from 2017- 2016
+19 March 2018: Dynein model here follows the default FV model stepping model.
+However, parameters are as in Athale et. al. 2014, kramer model for detachment
+Motor detachment follows Kramer-law
+Kinesin-5 also follows the default FV model and Kramer detachment model. 
+The detachment at plus end is immediate
+% -----------------------------------------------------------------------
+Aim: Exploring multi-aster packing criterion
+Input: Stabilized astral MTs, Kinesin-5 complex at a density of 10 motors/um2
+*/
+
+
+
+
+set simul multi_aster
+{
+    time_step = 0.001 
+    viscosity = 0.05 
+    kT        = 0.0042
+    display   = ( window_size= 600 , 600 ; back_color = white )
+}
+
+
+
+% -------------------------------------------------------------       
+% Geometry of space
+set	space cell
+{
+    geometry = ( circle 15  )
+}
+
+new space cell
+
+
+% -------------------------------------------------------------
+% Microtubule properties
+
+set fiber microtubule
+{
+    rigidity     = 20
+    segmentation = 0.5
+    binding_key  = 1
+    confine      = inside, 100 , cell
+   
+    %activity         = classic
+    %growing_speed    = 0.196
+    %shrinking_speed  = -0.325
+    %catastrophe_rate = 2.0527 ,  2.0527
+    %rescue_rate      = 3.3273
+    %fate             = rescue
+    %min_length       = 0.5
+
+
+    display      = { line_width= 1.5 ; color = dark_gray }
+}
+
+
+%# flux:
+%#  0                                    : 00
+%# -0.0003: 20.2683 , 33.5317            : 01
+%# -0.0028 : 2.0527 ,  3.3273            : 02
+%# -0.0279 : 0.2312 ,  0.3068            : 03
+%# -0.2785 : 0.049  ,  0.0048            : 04
+ 
+
+
+% -------------------------------------------------------------
+% Hand properties
+
+set hand kinesin
+{
+    binding_rate    = 5
+    binding_range   = 0.05
+    unbinding_rate  = 1
+    unbinding_force = 3
+        
+    activity        = move
+    max_speed       = 0.8
+    stall_force     = 5
+
+    bind_also_end    = 1   % there is end binding i.e. end-on binding
+    hold_growing_end = 0   % i.e. the hand detaches on reaching the end;  1  hand stalls and remain bound on the filament end
+    
+    display = { color= blue; size=6 }
+}
+
+
+
+set hand dynein
+{
+    binding_rate    = 12 
+    binding_range   = 0.02
+    unbinding_rate  = 1
+    unbinding_force = 1.75
+    
+    activity 	    = move
+    max_speed       = -2
+    stall_force     = 1.75
+    bind_also_end   = 1   % end-on binding
+    hold_growing_end = 0
+    display = { color= dark_green ; size=5 }
+}
+
+
+
+
+set hand kinesin5
+{
+    binding_rate    = 2.5
+    binding_range   = 0.05
+    unbinding_rate  = 0.05
+    unbinding_force = 1.6
+        
+    activity        = move
+    max_speed       = 0.04
+    stall_force     = 5
+
+    bind_also_end    = 1   % there is end binding i.e. end-on binding
+    hold_growing_end = 0   % i.e. the hand detaches on reaching the end; 1 hand stalls and remain bound on the filament end
+    
+    display = { color=red; size=5 }
+}
+
+
+
+
+% ---------------------------------------------------------
+%           Invoking kinesin and dynein motors
+
+set single gKinesin
+{
+    hand      = kinesin
+    stiffness = 100
+    activity  = fixed
+}
+
+set single gDynein
+{
+    hand      = dynein
+    stiffness = 100
+    activity  = fixed
+}
+
+
+set couple complexKinesin5
+{
+    hand1     = kinesin5
+    hand2     = kinesin5
+    stiffness = 100
+    diffusion = 10
+    length    = 0.05
+}
+
+set couple tetramericDynein
+{
+    hand1     = dynein
+    hand2     = dynein
+    stiffness = 100
+    diffusion = 10
+    length    = 0.05
+}
+
+ 
+new  7070  couple complexKinesin5 
+new  0  couple tetramericDynein
+new  0  single gKinesin 
+
+
+%-----------------------------
+%            Set the Aster       
+
+set solid core
+{
+    confine = 1,  100
+     display = { color = dark_green ; size = 0.01 }
+}
+
+set aster centrosome
+{
+    solid = core
+    fibers = microtubule
+    stiffness = 1000, 500
+}
+
+
+
+new 20 aster centrosome
+{
+    radius    = 0.5
+    nb_fibers = 40 
+    length    = 4.25
+}
+
+
+
+%-------------------------------
+
+run simul *
+	{
+		nb_steps  = 300000 %600000 %120000 %0
+		nb_frames =  300   %600    %0
+	}   
