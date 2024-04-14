@@ -3,7 +3,7 @@
 
 
 The repository is associated with multi-aster positioning and pattern formation,
-Khetan N, Pruliere G, Hebras C, Chenevert J, Athale CA. Self-organized optimal packing of kinesin-5-driven microtubule asters scales with cell size. J Cell Sci. 2021
+__Khetan N, Pruliere G, Hebras C, Chenevert J, Athale CA. Self-organized optimal packing of kinesin-5-driven microtubule asters scales with cell size. J Cell Sci. 2021__
 @ [Link](https://journals.biologists.com/jcs/article/134/10/jcs257543/268377/Self-organized-optimal-packing-of-kinesin-5-driven)
 
 
